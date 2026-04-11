@@ -135,7 +135,8 @@ Written when a deliberation begins. One per deliberation.
 | `decision_class` | Primary domain of the deliberation. Used for context; calibration scoring uses each agent's claimed domain from their proposal. |
 | `action` | The action being deliberated. Same structure as ADP's proposal action. |
 | `participants` | List of agent IDs expected to submit proposals. |
-| `config` | Deliberation configuration (max rounds, participation floor, etc.). |
+| `config` | Deliberation configuration (max rounds, participation floor, weight cap, etc.). |
+| `delegations` | Optional. If domain delegation (ADP §5.5) was activated, lists the delegation clusters, their members, and their internal deliberation IDs. |
 
 ### 3.2 `proposal_emitted`
 
@@ -648,6 +649,39 @@ getCalibrationHistory(agent_id, domain, window) → CalibrationScore[]
 ```
 
 Returns a time series of calibration scores, enabling trend analysis.
+
+### 7.3 Federation Health Queries
+
+These queries support ADP's federation health metrics (ADP Section 5.6).
+They are RECOMMENDED for Level 3 conformance.
+
+```
+getWeightDistribution(window) → { agentId: string, domain: string, weight: number }[]
+```
+
+Returns the weight of all active agents (those who participated in at least
+one deliberation within the window), enabling Gini coefficient computation.
+
+```
+getIntegrationRate(agent_id) → { deliberationsToThreshold: number, currentWeight: number, medianWeight: number }
+```
+
+Returns how many deliberations a new agent has participated in and whether
+its weight has reached meaningful levels relative to the median.
+
+```
+getDeliberationEfficiency(window) → { avgRounds: number, quorumFailureRate: number, avgParticipants: number, delegationRate: number }
+```
+
+Returns aggregate deliberation statistics over a time window, enabling trend
+detection for scaling degradation.
+
+```
+getCalibrationMobility(window) → { agentId: string, weightChange: number }[]
+```
+
+Returns per-agent weight changes over a window. Low mobility indicates a
+calcified hierarchy where the learning loop has stalled.
 
 ---
 
