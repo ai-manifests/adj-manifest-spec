@@ -20,6 +20,9 @@ specifies the entry types a journal writes, the scoring contract that converts
 (confidence, outcome) pairs into calibration scores, and the minimum query
 surface that consumers code against.
 
+ADJ is designed for federated deployment without central coordination; see
+Section 13.
+
 ADJ is a peer of ADP, not a dependency. ADP defines how agents decide together;
 ADJ defines how those decisions are recorded, queried, and scored over time.
 The two specs compose — ADP's CalibrationSource interface is implemented by
@@ -950,6 +953,88 @@ avoids the scoring loop entirely. The journal SHOULD track per-agent:
 
 Agents with systematically low outcome or high opt-out rates SHOULD see
 authority discounted, per ADP Section 11.6.
+
+---
+
+## 13. Federation
+
+ADJ journals are per-agent, not shared. Each agent owns its epistemic history,
+carries it across deployments, and presents it to peers on request. This
+design is federation-native: no central scoreboard, no shared substrate, no
+lock-in point.
+
+### 13.1 Journal as a Service
+
+An agent's journal endpoint is declared in its ADP manifest
+(`.well-known/adp-manifest.json`, field `journal_endpoint`). The endpoint
+serves the ADJ query contract (Section 7) over HTTPS.
+
+Peers query calibration scores by fetching:
+
+```
+GET https://agent.example.com/adj/v0/calibration?agent_id=did:adp:test-runner-v2&domain=code.correctness
+```
+
+The response is the CalibrationScore triple:
+
+```json
+{ "value": 0.85, "sample_size": 312, "staleness": "P18D" }
+```
+
+Implementations MAY expose the full query contract (getDeliberation,
+getConditionTrace, getOutcome) or restrict access to calibration queries only.
+The minimum for federation is `getCalibration`.
+
+### 13.2 Trust Without a Central Authority
+
+An agent reports its own calibration. This is trustworthy because:
+
+1. **Append-only guarantee.** Journal entries cannot be retroactively modified
+   (Section 8). Hash chaining makes tampering detectable.
+2. **External evidence.** Outcome entries reference external evidence
+   (`evidence_refs` pointing at CI runs, incident tickets, monitoring
+   signals). These are independently verifiable.
+3. **Replayable logs.** Any peer can request the full deliberation record
+   (via `getDeliberation`) and recompute the calibration score from the raw
+   (confidence, outcome) pairs. If the recomputed score disagrees with the
+   reported score, the agent is lying.
+4. **Ground truth anchoring.** Outcomes marked `ground_truth: true` reference
+   signals that neither the reporter nor the scored agent controls (CI
+   systems, PagerDuty, human sign-off).
+
+Trust is trust-but-verify: accept the reported score, spot-check by replaying
+the log, discount agents whose scores don't survive replay.
+
+### 13.3 Portability
+
+An agent's journal is portable. When an agent moves to a new organization,
+its JSONL files (or database export) move with it. The new organization's
+ADP orchestrator queries the agent's journal endpoint and gets calibration
+history earned elsewhere.
+
+This is the advantage of per-agent journals over a shared substrate. A shared
+journal ties agents to the organization that runs it. Per-agent journals with
+a standard query contract let agents carry their track record across
+deployments — the same way a developer carries their commit history across
+employers.
+
+PostMortem-style JSONL session files are literally the thing an agent serves
+from its journal endpoint. The existing tool is the reference implementation
+of the federated substrate, not just a local one.
+
+### 13.4 Privacy and Selective Disclosure
+
+Not all deliberation content should be shared across organizational
+boundaries. Federation supports tiered disclosure:
+
+| Level | What is shared | Use case |
+|---|---|---|
+| **Scores only** | CalibrationScore triple | Sufficient for weighting. No deliberation content crosses the boundary. |
+| **Summaries** | Scores + condition quality metrics + deliberation counts | Enables auditing without content disclosure. |
+| **Full records** | Complete deliberation logs with proposals and outcomes | Full transparency. Requires explicit consent. |
+
+Implementations SHOULD default to scores-only for cross-organization queries
+and full records for intra-organization queries.
 
 ---
 
