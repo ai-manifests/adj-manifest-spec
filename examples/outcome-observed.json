@@ -1,0 +1,17 @@
+{
+  "entry_id": "adj_01HMZP2D",
+  "entry_type": "outcome_observed",
+  "deliberation_id": "dlb_01HMXJ3E9R",
+  "timestamp": "2026-04-14T09:15:00.000Z",
+  "prior_entry_hash": "sha256:j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8m9n0o1",
+  "observed_at": "2026-04-14T09:12:00.000Z",
+  "outcome_class": "binary",
+  "success": true,
+  "evidence_refs": [
+    "ci:github-actions/run/8835001",
+    "monitoring:datadog/alert/clear/991204"
+  ],
+  "reporter_id": "did:adp:ci-monitor-v1",
+  "reporter_confidence": 0.95,
+  "ground_truth": true
+}

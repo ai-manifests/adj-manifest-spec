@@ -1,0 +1,29 @@
+{
+  "entry_id": "adj_01HMXMAC",
+  "entry_type": "deliberation_closed",
+  "deliberation_id": "dlb_01HMXJ3E9R",
+  "timestamp": "2026-04-11T14:35:30.004Z",
+  "prior_entry_hash": "sha256:g7h8i9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8",
+  "termination": "converged",
+  "round_count": 1,
+  "tier": "partially_reversible",
+  "final_tally": {
+    "approve_weight": 0.89,
+    "reject_weight": 0.00,
+    "abstain_weight": 0.64,
+    "total_weight": 1.53,
+    "approval_fraction": 1.00,
+    "participation_fraction": 0.582,
+    "threshold": 0.60
+  },
+  "weights": {
+    "did:adp:test-runner-v2": 0.71,
+    "did:adp:security-scanner-v3": 0.64,
+    "did:adp:style-linter-v1": 0.18
+  },
+  "committed_action": {
+    "kind": "merge_pull_request",
+    "target": "github.com/acme/api#4471",
+    "parameters": { "strategy": "squash" }
+  }
+}

@@ -1,0 +1,24 @@
+# .gitea/workflows/validate-journal.yml
+# Copy this file into your journal repo to validate ADJ entries on every push.
+
+name: Validate ADJ Entries
+
+on:
+  push:
+    paths:
+      - '**/*.journal.json'
+      - '**/*.journal.jsonl'
+
+jobs:
+  validate:
+    runs-on: linux
+    steps:
+      - name: Checkout
+        run: |
+          git clone "${{ github.server_url }}/${{ github.repository }}.git" .
+          git checkout ${{ github.sha }}
+
+      - name: Validate journal entries against schema
+        run: |
+          npm install -g ajv-cli ajv-formats
+          find . -name '*.journal.json' -exec ajv validate -s https://adj-manifest.dev/schema/v0.json -d {} \;

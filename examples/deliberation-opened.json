@@ -1,0 +1,22 @@
+{
+  "entry_id": "adj_01HMXM7A",
+  "entry_type": "deliberation_opened",
+  "deliberation_id": "dlb_01HMXJ3E9R",
+  "timestamp": "2026-04-11T14:32:00.000Z",
+  "prior_entry_hash": null,
+  "decision_class": "code.correctness",
+  "action": {
+    "kind": "merge_pull_request",
+    "target": "github.com/acme/api#4471",
+    "parameters": { "strategy": "squash" }
+  },
+  "participants": [
+    "did:adp:test-runner-v2",
+    "did:adp:security-scanner-v3",
+    "did:adp:style-linter-v1"
+  ],
+  "config": {
+    "max_rounds": 3,
+    "participation_floor": 0.50
+  }
+}

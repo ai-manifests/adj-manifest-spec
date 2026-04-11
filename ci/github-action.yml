@@ -1,0 +1,29 @@
+# .github/workflows/validate-journal.yml
+# Copy this file into your journal repo to validate ADJ entries on every push.
+
+name: Validate ADJ Entries
+
+on:
+  push:
+    paths:
+      - '**/*.journal.json'
+      - '**/*.journal.jsonl'
+  pull_request:
+    paths:
+      - '**/*.journal.json'
+      - '**/*.journal.jsonl'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate journal entries against schema
+        run: |
+          npm install -g ajv-cli ajv-formats
+          find . -name '*.journal.json' -exec ajv validate -s https://adj-manifest.dev/schema/v0.json -d {} \;
