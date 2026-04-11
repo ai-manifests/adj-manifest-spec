@@ -47,11 +47,11 @@ ADP produces deliberation events. ADJ stores them. When outcomes arrive, ADJ com
 2. Write conformant entries per the [entry types](spec.md#3-entry-types)
 3. Serve the [query contract](spec.md#7-query-contract) for consumers
 
-### For ADP orchestrators
+### For ADP agents
 
 1. Write deliberation events to a journal as they occur
 2. Implement CalibrationSource by calling `getCalibration(agent_id, domain)` on the journal
-3. Write `outcome_observed` entries when results are available
+3. Write `outcome_observed` entries when results are available — manually, or via an OutcomePlugin that watches CI systems, monitoring platforms, or other external sources automatically
 
 ## Examples
 
