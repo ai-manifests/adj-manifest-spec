@@ -189,7 +189,7 @@ per deliberation.
 | Field | Description |
 |---|---|
 | `round` | Belief-update round number (1-indexed). |
-| `event_kind` | One of: `falsification_evidence`, `acknowledge`, `reject`, `amend`, `revise`, `challenge_tier`, `tier_response`, `timeout`. |
+| `event_kind` | One of: `falsification_evidence`, `acknowledge`, `reject`, `amend`, `revise`, `challenge_tier`, `tier_response`, `timeout`, `outcome_contested`, `calibration_divergence`. |
 | `agent_id` | The agent that produced this event. |
 | `target_agent_id` | The agent whose condition or proposal is targeted. `null` for self-directed events (revise, timeout). |
 | `target_condition_id` | The dissent condition being addressed. `null` for non-condition events. |
@@ -359,6 +359,47 @@ MUST handle this latency:
 - Staleness in the CalibrationScore triple is measured from the most recent
   *scored* deliberation (one with an outcome), not the most recent
   participation.
+
+### 4.4 Outcome Contestation
+
+Any agent MAY contest a recorded outcome by submitting an `outcome_contested`
+round event with evidence. Contestation is the mechanism that prevents a
+compromised outcome reporter (or a false-positive CI signal) from permanently
+poisoning calibration data.
+
+**Contestation flow:**
+
+1. An `outcome_observed` entry is written with `ground_truth: true`.
+2. Within the contestation window (default: 72 hours), any participating agent
+   submits an `outcome_contested` round event referencing the outcome entry ID
+   and providing counter-evidence.
+3. If agents with combined domain authority ≥ 0.7 for the deliberation's
+   decision class support the contestation, the outcome is superseded.
+4. A new `outcome_observed` entry is written with `supersedes` referencing
+   the original, reflecting the contested result.
+5. After the contestation window expires with no challenges, the outcome
+   is considered final.
+
+**Round event for contestation:**
+
+```json
+{
+  "entry_type": "round_event",
+  "event_kind": "outcome_contested",
+  "agent_id": "did:adp:security-scanner-v3",
+  "target_condition_id": null,
+  "payload": {
+    "contested_entry_id": "adj_01HMZP2D",
+    "reason": "CI reported success but production regression detected within 24 hours.",
+    "evidence_refs": ["monitoring:datadog/alert/triggered/991205"],
+    "proposed_outcome": false
+  }
+}
+```
+
+Uncontested outcomes remain authoritative. Contestation after the window
+expires MUST be rejected. Implementations SHOULD log expired contestation
+attempts for audit.
 
 ---
 

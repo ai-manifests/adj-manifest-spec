@@ -82,7 +82,7 @@
           "round": { "type": "integer", "minimum": 1, "description": "Belief-update round number" },
           "event_kind": {
             "type": "string",
-            "enum": ["falsification_evidence", "acknowledge", "reject", "amend", "revise", "challenge_tier", "tier_response", "timeout"],
+            "enum": ["falsification_evidence", "acknowledge", "reject", "amend", "revise", "challenge_tier", "tier_response", "timeout", "outcome_contested", "calibration_divergence"],
             "description": "State-machine transition type"
           },
           "agent_id": { "type": "string", "description": "Agent that produced this event" },
