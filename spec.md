@@ -633,6 +633,45 @@ getOutcome(deliberation_id) → OutcomeEntry | null
 Returns the `outcome_observed` entry for a deliberation, or null if no outcome
 has been recorded.
 
+```
+listDeliberationsSince(since, limit) → DeliberationRecord[]
+```
+
+Returns full deliberation records (all entries per deliberation, ordered by
+timestamp) for every deliberation whose `deliberation_closed` entry has a
+timestamp at or after `since`. Ordered newest-first. `limit` caps the
+response size; implementations MUST return at most `limit` records and
+SHOULD set a sensible server-side maximum (the reference implementations
+use 500).
+
+This is the batch equivalent of calling `getDeliberation` once per
+deliberation ID. It is REQUIRED at Level 2 so registries and aggregators
+can compute federation-wide metrics in a single round trip per agent
+rather than `N × M` round trips when walking `N` deliberations across `M`
+peer journals.
+
+The HTTP binding is `GET /adj/v0/deliberations?since=<iso8601>&limit=<int>`.
+The response envelope is:
+
+```json
+{
+  "since": "2026-04-10T00:00:00Z",
+  "limit": 200,
+  "total": 42,
+  "records": [
+    {
+      "deliberationId": "dlb_01HMXJ3E9R",
+      "entries": [ /* same shape as getDeliberation(id) */ ]
+    }
+  ]
+}
+```
+
+Returns `records` newest-first by `deliberation_closed.timestamp`.
+Deliberations with no `deliberation_closed` entry (still in progress) are
+excluded — open deliberations are not billable history. An agent that has
+never closed a deliberation in the window returns `{ total: 0, records: [] }`.
+
 ### 7.2 Recommended Queries
 
 These are not required for Level 2 conformance but are useful for monitoring
