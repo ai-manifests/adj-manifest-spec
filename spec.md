@@ -722,6 +722,89 @@ getCalibrationMobility(window) → { agentId: string, weightChange: number }[]
 Returns per-agent weight changes over a window. Low mobility indicates a
 calcified hierarchy where the learning loop has stalled.
 
+### 7.4 Signed Calibration Snapshot (Well-Known Endpoint)
+
+Agents at Level 3 compliance SHOULD expose a signed calibration snapshot at
+`/.well-known/adp-calibration.json`. The snapshot is a per-agent summary
+covering every decision class the agent claims authority over, signed with
+the same Ed25519 key published in the agent's manifest.
+
+The purpose of this endpoint is to allow cross-org trust bootstrapping and
+third-party tamper evidence *without* requiring a peer to walk the full
+journal or contact a central registry. A peer that wants to verify another
+agent's calibration fetches the well-known file, verifies the signature
+against the manifest public key, and is done — one HTTPS call plus one
+signature check.
+
+**Response envelope:**
+
+```json
+{
+  "agentId": "did:adp:test-runner-v2",
+  "publicKey": "82d5d49d701cb3260b730e8021a6235f4c607c745f7db20353a189de6d683dd5",
+  "computedAt": "2026-04-13T10:30:00.000Z",
+  "snapshots": [
+    {
+      "domain": "code.correctness",
+      "calibrationValue": 0.9804,
+      "sampleSize": 1,
+      "journalHash": "3a8f1e2d9c7b...",
+      "computedAt": "2026-04-13T10:30:00.000Z",
+      "signature": "ed25519:7a4b1c..."
+    }
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `agentId` | Top-level envelope: the agent whose calibration is being published. MUST match the `agent_id` in the agent's manifest. |
+| `publicKey` | Hex-encoded Ed25519 public key. MUST match the `publicKey` in the agent's manifest. Clients MAY cross-check this. |
+| `computedAt` | When the envelope was built. Typically the most recent snapshot's `computedAt`. |
+| `snapshots[].domain` | The decision class this snapshot applies to. One entry per declared decision class with non-empty calibration history. |
+| `snapshots[].calibrationValue` | The Brier-based calibration score (Section 5) in [0, 1]. |
+| `snapshots[].sampleSize` | Number of (confidence, outcome) pairs contributing to this value. |
+| `snapshots[].journalHash` | Hex-encoded SHA-256 of the scoring pairs used to compute this value. Canonical form: for each pair ordered by outcome timestamp, append `<deliberation_id>:<confidence>:<outcome>|`, then hash the resulting UTF-8 string. This format is deterministic and matches what audit implementations compute when walking the journal directly, enabling direct comparison between an agent's signed snapshot and a third-party replay. |
+| `snapshots[].computedAt` | When this specific snapshot was computed. |
+| `snapshots[].signature` | Ed25519 signature over a canonical string, hex-encoded. See canonicalization below. |
+
+**Signature canonicalization.** Each snapshot is signed individually so a
+peer can verify a single (agent, domain) pair without trusting the rest of
+the envelope. The signed message is the UTF-8 encoding of the pipe-joined
+string:
+
+```
+<agentId>|<domain>|<calibrationValue>|<sampleSize>|<journalHash>|<computedAt>
+```
+
+`calibrationValue` MUST be serialized to exactly four decimal places
+(matching the Brier precision in Section 5). `computedAt` MUST be the same
+ISO 8601 string that appears in the JSON. This is a minimal canonicalization
+chosen for implementability across language ecosystems without JSON-canonicalization libraries.
+
+**Properties this delivers.** An agent that rewrites its journal to fake a
+better calibration value would need to produce a new snapshot with a new
+signature — but a third party (registry or peer) that archived the prior
+signed snapshot can present the divergence mechanically. The journal hash
+binds the published value to a specific set of scoring pairs, so an agent
+cannot claim the same calibration was computed from a different journal state
+without producing two conflicting signatures over the same (agentId, domain)
+pair. The registry pattern for catching this is described in ADJ §8.3.
+
+**Registry archival.** A registry MAY periodically fetch this endpoint for
+every registered agent, verify the signatures, and store the snapshots as
+rolling history. The audit surface then has three values to compare for any
+(agent, domain): reported (the value the agent currently serves via
+`getCalibration`), signed (from the well-known snapshot), and computed (from
+replaying the journal). All three MUST agree within tolerance; any
+divergence between them is evidence of either tampering or implementation
+drift and SHOULD be flagged.
+
+**Not required.** This endpoint is a Level 3 SHOULD, not a MUST. Agents
+that do not publish signed snapshots remain conformant at Level 2. Peers
+that want tamper evidence from such agents fall back to walking the journal
+via `listDeliberationsSince` (Section 7.1) and recomputing.
+
 ---
 
 ## 8. Append-Only and Integrity
