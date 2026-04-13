@@ -929,6 +929,7 @@ CalibrationSource interface, and closes the learning loop.
 ## 11. Relationship to Other Specs
 
 ```
+ACB                  ← cognitive budget, settlement (extends ADJ via v0.1 hook)
 ADJ — this spec      ← journal entries, calibration scoring, query contract
 ADP                  ← proposal → weight → converge → commit (consumes ADJ)
 mcp-manifest         ← declares journal participation and endpoint
@@ -939,20 +940,52 @@ PostMortem           ← existing JSONL format, natural L1 implementation
 | Spec | Relationship |
 |---|---|
 | **ADP** | ADP consumes ADJ via the CalibrationSource interface. ADP writes deliberation events; ADJ stores them. ADP's weighting function reads calibration scores from ADJ's query contract. The composition is bidirectional: ADP produces the data, ADJ scores it, ADP uses the scores. |
+| **ACB** | ACB extends ADJ in v0.1 by adding three optional entry types — `budget_committed`, `budget_cancelled`, `settlement_recorded` — that follow the §3.0 common envelope and inherit hash chaining, append-only guarantees, and replay verification. ACB requires no other ADJ changes. ADJ-only deployments function unchanged; the new entry types are simply unused. See §11.2. |
 | **mcp-manifest** | An agent's mcp-manifest declares that it participates in ADJ and points at its journal endpoint (or declares it writes to a shared journal). The `adj_journal` field in mcp-manifest is the discovery mechanism. |
 | **PostMortem** | PostMortem's single-agent JSONL session format is a valid Level 1 ADJ implementation. The journal spec retroactively describes the existing tool's record format, with L2 and L3 adding query and scoring capabilities. This is the bridge to existing work and the credibility anchor: the spec describes something that already runs, not a greenfield design. |
 | **A2A / AGNTCY** | If the query contract is exposed as a network service, transport is delegated to A2A/AGNTCY. ADJ defines the queries, not how they travel. |
 
-### 11.1 The Three-Spec Family
+### 11.1 The Four-Spec Family
 
-mcp-manifest, ADP, and ADJ form a composable stack:
+mcp-manifest, ADP, ADJ, and ACB form a composable stack:
 
 - **mcp-manifest** declares what an agent can do.
 - **ADP** declares how agents agree on doing it together.
 - **ADJ** declares how those agreements are recorded and scored.
+- **ACB** declares how the cognitive work of agreeing is paid for.
 
 Each spec has a reference implementation and a worked example. Each is useful
 standalone and more useful together.
+
+### 11.2 v0.1 Hook for ACB: Three New Entry Types
+
+ACB v0 adds three entry types that ADJ adopts in its v0.1 hook list. Each
+follows the ADJ §3.0 common envelope — `entry_id`, `entry_type`,
+`deliberation_id`, `timestamp`, `prior_entry_hash` — so they live in the
+same journal as the existing five entry types and inherit hash chaining,
+append-only guarantees, and replay verification.
+
+| Entry type | Written by | When |
+|---|---|---|
+| `budget_committed` | Budget authority's journal | At or before `deliberation_opened` for the referenced deliberation. |
+| `budget_cancelled` | Budget authority's journal | Before `deliberation_opened`, or before any proposal if `constraints.irrevocable` is false. Mutually exclusive with `settlement_recorded`. |
+| `settlement_recorded` | Budget authority's journal | After `deliberation_closed` and (for deferred/two-phase modes) after `outcome_observed` or outcome-window expiry. One per budget. |
+
+The full schemas live in the ACB spec; ADJ does not duplicate them. ADJ
+implementations that wish to support ACB MUST treat these three values as
+valid `entry_type` discriminators and apply the common-envelope checks.
+ADJ implementations that do not wish to support ACB MAY reject them as
+unknown entry types — both behaviors are conformant.
+
+The split between `budget_committed`, `deliberation_*`, and
+`settlement_recorded` is the same load-bearing design choice as the split
+between `deliberation_closed` and `outcome_observed`: pre-commitment, work,
+and post-hoc settlement are recorded separately and asynchronously, with
+the journal's hash chain making the sequencing auditable. Settlement does
+not require a synchronous close-of-deliberation handshake. The budget
+authority signs the record once. Any disagreement is caught by replay
+against the ground-truth deliberation entries the same way calibration
+divergence is.
 
 ---
 

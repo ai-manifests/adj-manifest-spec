@@ -13,8 +13,17 @@
     },
     "entry_type": {
       "type": "string",
-      "enum": ["deliberation_opened", "proposal_emitted", "round_event", "deliberation_closed", "outcome_observed"],
-      "description": "Entry type discriminator"
+      "enum": [
+        "deliberation_opened",
+        "proposal_emitted",
+        "round_event",
+        "deliberation_closed",
+        "outcome_observed",
+        "budget_committed",
+        "budget_cancelled",
+        "settlement_recorded"
+      ],
+      "description": "Entry type discriminator. The last three are ACB v0.1 hook entries (see acb-manifest.dev) and are validated by acb-validate, not adj-validate."
     },
     "deliberation_id": {
       "type": "string",
