@@ -71,7 +71,7 @@ PostMortem-style JSONL session journals are a natural Level 1 implementation.
 
 ## Reference Implementation
 
-A C# reference library implementing journal types, calibration scoring, and the query contract is forthcoming at [adj-ref-lib](https://git.marketally.com/ai-manifests/adj-ref-lib).
+A C# reference library implementing journal types, calibration scoring, and the query contract is at [adj-ref-lib-csharp](https://git.marketally.com/ai-manifests/adj-ref-lib-csharp). TypeScript and Python ports live at [adj-ref-lib-ts](https://git.marketally.com/ai-manifests/adj-ref-lib-ts) and [adj-ref-lib-py](https://git.marketally.com/ai-manifests/adj-ref-lib-py).
 
 ## Status
 
