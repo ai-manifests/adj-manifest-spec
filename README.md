@@ -86,7 +86,7 @@ the copyright and patent grants defined therein.
 - Author: David H Friedel Jr.
 - Copyright: © 2026 David H Friedel Jr.
 - First Published: 2026-03-20
-- Affiliated with: MarketAlly (https://marketally.com)
+- Affiliated with: MarketAlly (https://marketally.ai)
 - **Specification**: adj-manifest  
 - **Version**: v0 (Draft)  
 - **Status**: Public Draft  
