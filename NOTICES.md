@@ -24,7 +24,7 @@ A Licensee may consent to accepting the current Community Specification License 
 
 ---------------------------------------------------------------------------------
 
-Licensee's name: **MarketAlly Pte Ltd**
+Licensee's name: **David H Friedel Jr.**
 
 Authorized individual and system identifier: **David H. Friedel Jr.** (Gitea: `logikonline`, GitHub: `logikonline`)
 
