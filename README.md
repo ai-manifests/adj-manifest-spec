@@ -1,5 +1,7 @@
 # adj-manifest specification
 
+_A specification by MarketAlly_
+
 A portable, append-only journal format for agent deliberations — enabling calibration scoring, audit, and cross-deliberation learning.
 
 ## The Problem
@@ -69,10 +71,17 @@ ADP produces deliberation events. ADJ stores them. When outcomes arrive, ADJ com
 
 PostMortem-style JSONL session journals are a natural Level 1 implementation.
 
-## Reference Implementation
+## Licensing Model
 
-A C# reference library implementing journal types, calibration scoring, and the query contract is at [adj-ref-lib-csharp](https://git.marketally.com/ai-manifests/adj-ref-lib-csharp). TypeScript and Python ports live at [adj-ref-lib-ts](https://git.marketally.com/ai-manifests/adj-ref-lib-ts) and [adj-ref-lib-py](https://git.marketally.com/ai-manifests/adj-ref-lib-py).
+The ADJ specification text is released under CC0 1.0 Universal (public domain dedication).
+Reference implementations, schemas, and tooling are released under the Apache 2.0 License.
+The specification is fully implementable without reliance on any specific implementation.
 
-## Status
+## Document Metadata
 
-**v0 — Draft.** Feedback welcome via issues.
+- **Author**: David H Friedel Jr, MarketAlly
+- **Specification**: adj-manifest  
+- **Version**: v0 (Draft)  
+- **Status**: Public Draft  
+
+MarketAlly refers to affiliated entities including MarketAlly LLC (USA), MarketAlly Pte Ltd (Singapore), and MarketAlly OÜ (Estonia).
