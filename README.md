@@ -73,9 +73,14 @@ PostMortem-style JSONL session journals are a natural Level 1 implementation.
 
 ## Licensing Model
 
-The ADJ specification text is released under CC0 1.0 Universal (public domain dedication).
+The ADJ specification text is released under the [Community Specification 
+License 1.0 (Patent and Copyright)](https://github.com/CommunitySpecification/1.0).
 Reference implementations, schemas, and tooling are released under the Apache 2.0 License.
 The specification is fully implementable without reliance on any specific implementation.
+
+Contributions to this specification are accepted under the same Community 
+Specification License 1.0 terms. By submitting a contribution, you agree to 
+the copyright and patent grants defined therein.
 
 ## Document Metadata
 
@@ -85,3 +90,6 @@ The specification is fully implementable without reliance on any specific implem
 - **Status**: Public Draft  
 
 MarketAlly refers to affiliated entities including MarketAlly LLC (USA), MarketAlly Pte Ltd (Singapore), and MarketAlly OÜ (Estonia).
+
+"ADP", "ACB", "ADJ", and "Agent Registry" are trademarks of MarketAlly. 
+The specifications are openly licensed; the names are not.
