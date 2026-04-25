@@ -83,13 +83,18 @@ Specification License 1.0 terms. By submitting a contribution, you agree to
 the copyright and patent grants defined therein.
 
 ## Document Metadata
-
-- **Author**: David H Friedel Jr, MarketAlly
+- Author: David H Friedel Jr.
+- Publisher: MarketAlly Pte Ltd
+- Copyright: © 2026 MarketAlly Pte Ltd
+- First Published: [2026-03-20]
 - **Specification**: adj-manifest  
 - **Version**: v0 (Draft)  
 - **Status**: Public Draft  
 
-MarketAlly refers to affiliated entities including MarketAlly LLC (USA), MarketAlly Pte Ltd (Singapore), and MarketAlly OÜ (Estonia).
+MarketAlly Pte Ltd publishes this specification as part of its developer 
+tooling work. The MarketAlly group also includes MarketAlly LLC (USA, 
+fintech and consumer applications) and MarketAlly OÜ (Estonia, identity and governance infrastructure).
 
-"ADP", "ACB", "ADJ", and "Agent Registry" are trademarks of MarketAlly. 
-The specifications are openly licensed; the names are not.
+"ADP", "ACB", "ADJ", and "Agent Registry" are trademarks of MarketAlly 
+Pte Ltd, used across the MarketAlly group of companies. The 
+specifications are openly licensed; the names are not.
