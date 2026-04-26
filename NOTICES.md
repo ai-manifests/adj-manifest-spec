@@ -11,7 +11,7 @@ MarketAlly refers to affiliated entities including MarketAlly LLC (USA), MarketA
 
 ## Code of Conduct
 
-Contact for Code of Conduct issues or inquiries: **dave@marketally.ai** (David H. Friedel Jr., MarketAlly).
+Contact for Code of Conduct issues or inquiries: **dev@ai-manifests.org** (David H. Friedel Jr., MarketAlly).
 
 [A second contact will be designated as the working group expands. Until then, all complaints route to the originating maintainer.]
 

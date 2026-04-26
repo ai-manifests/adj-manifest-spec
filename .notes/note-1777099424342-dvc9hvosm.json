@@ -1,8 +1,0 @@
-{
-  "id": "note-1777099424342-dvc9hvosm",
-  "title": "Working",
-  "content": "\n## Reference Implementation\n\nA C# reference library implementing journal types, calibration scoring, and the query contract is at [adj-ref-lib-csharp](https://git.marketally.com/ai-manifests/adj-ref-lib-csharp). TypeScript and Python ports live at [adj-ref-lib-ts](https://git.marketally.com/ai-manifests/adj-ref-lib-ts) and [adj-ref-lib-py](https://git.marketally.com/ai-manifests/adj-ref-lib-py).",
-  "createdAt": 1777099424341,
-  "updatedAt": 1777099427573,
-  "tags": []
-}
